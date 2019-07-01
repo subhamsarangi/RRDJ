@@ -1,16 +1,30 @@
-# RRDJ
-## React Redux Django Lead Manager
-### Create an environment
+# RRDJ - React Redux Django Lead Manager
+## Create the environment
 
 ```
 pipenv shell
 pipenv django djangorestframework django-rest-knox
 ```
 
-### Create a Django project, `leadmanager` and an app, `leads`.
-* Make a model `Lead` with name, email, message, timestamp. migrate.
+## Create a Django project, `leadmanager`, an app, `leads`, and a model, 'Lead'.
+```
+django-admin startproject leadmanager
+cd leadmanager
+python manage.py startapp leads
+```
+* Create the model with name, email, message, timestamp. Migrate.
 
-### Build a very basic API
+```python
+from django.db import models
+class Lead(models.Model):
+    name = models.CharField(max_length=100)
+    email = models.EmailField(max_length=100, unique=True)
+    message = models.CharField(max_length=500, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+```
+
+## Build a very basic API
 * [DRF](https://www.django-rest-framework.org/) provides us with many things like `ModelSerializer`, `ModelViewSet`, `DefaultRouter`
 
 #### leads/serializers.py
@@ -65,7 +79,7 @@ GET http://localhost:8000/api/leads/2
 DELETE http://localhost:8000/api/leads/2/
 ```
 
-### Configure [React](https://reactjs.org/)
+## Configure [React](https://reactjs.org/)
 #### Create a new app, `frontend`. Add it to the project settings.py file.
 #### Create the following directories and files.
 1. frontend/src/component (for our App.js,  index.js, components, reducers, actions, etc.)
@@ -216,7 +230,7 @@ import React, { Fragment } from 'react';
 </Fragment>
 ```
 
-### Using [Redux](https://redux.js.org/)
+## Using [Redux](https://redux.js.org/)
 * Install Redux and friends
 `npm i redux react-redux redux-thunk redux-devtools-extension`
 
