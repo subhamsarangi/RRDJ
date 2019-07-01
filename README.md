@@ -1,6 +1,7 @@
 # RRDJ
 ## React Redux Django Lead Manager
 ### Create an environment
+
 ```
 pipenv shell
 pipenv django djangorestframework django-rest-knox
@@ -13,7 +14,8 @@ pipenv django djangorestframework django-rest-knox
 * [DRF](https://www.django-rest-framework.org/) provides us with many things like `ModelSerializer`, `ModelViewSet`, `DefaultRouter`
 
 #### leads/serializers.py
-* A ModelSerializer(with a meta class like ModelForm)
+* Create a ModelSerializer class (with a meta class like ModelForm)
+
 ```python
 from rest_framework.serializers import ModelSerializer
 from .models import Lead
@@ -24,7 +26,8 @@ class LeadSerializer(ModelSerializer):
 ```
 
 #### leads/api.py
-* A ModelViewSet(queryset, permission_classes, serializer_class).
+* Create a ModelViewSet class (queryset, permission_classes, serializer_class).
+
 ```python
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import AllowAny
@@ -37,7 +40,8 @@ class LeadViewSet(ModelViewSet):
 ```
 
 #### leads/urls.py
-* A router(router.register(path, viewset, app))
+* Create a DefaultRouter
+
 ```python
 from rest_framework.routers import DefaultRouter
 from .api import LeadViewSet
@@ -47,11 +51,13 @@ router.register('api/leads', LeadViewSet, 'leads')
 
 #### leads/urls.py
 * an urlpattern
+
 ```python
+...
 urlpatterns = router.urls
 ```
 
-#### Download [POSTMAN](https://www.getpostman.com/) app and check the API
+#### Download [POSTMAN](https://www.getpostman.com/) and check the API.
 ```
 POST http://localhost:8000/api/appname/ {JSON DATA}
 GET http://localhost:8000/api/appname
@@ -60,7 +66,7 @@ DELETE http://localhost:8000/api/appname/2/
 ```
 
 ### Configure [React](https://reactjs.org/)
-#### Create a new app, `frontend` add to the project settings file.
+#### Create a new app, `frontend`. Add it to the project settings.py file.
 #### Create the following directories and files.
 1. frontend/src/component (for our App.js,  index.js, components, reducers, actions, etc.)
 2. frontend/static/frontend(for the compiled main.js)
@@ -68,12 +74,13 @@ DELETE http://localhost:8000/api/appname/2/
 
 #### Create a `git repository`, a `gitignore` file. (use [gitignore.io](www.gitignore.io))
 
-#### Setup node and react and [Webpack](https://webpack.js.org/)
+#### Setup Node and React and [Webpack](https://webpack.js.org/).
 1. Download [NodeJS](https://nodejs.org/)
 2. `npm init -y`
 3. `npm i -D webpack webpack-cli @babel/core babel-loader @babel/preset-env @babel/preset-react babel-plugin-transform-class-properties`
 4. `npm i react react-dom prop-types`
 5. Create a `.babelrc` file  in root. Write the following in it,
+
 ```json
 {
 "presets":["babel/preset-env", "@babel/preset-react"],
@@ -81,7 +88,8 @@ DELETE http://localhost:8000/api/appname/2/
 }
 ```
 
-6. Create a `webpack.config.js` file in the root. Write the following in it,
+6. Create a `webpack.config.js` file in the root. Write the following in it.
+
 ```javascript
 module.exports = {
     module: {
@@ -95,6 +103,7 @@ module.exports = {
 ```
 
 #### In our `package.json`, write some scripts.
+
 ```json
 "script": {
     "dev":"webpack --mode development --watch ./leadmanager/frontend/src/index.js --output ./leadmanager/frontend/static/frontend/main.js",
@@ -103,12 +112,14 @@ module.exports = {
 ```
 
 
-#### create /frontend/src/index.js
+#### Create /frontend/src/index.js
+
 ```javascript
 import App from './components/App';
 ```
 
-#### create /frontend/src/components/App.js
+#### Create /frontend/src/components/App.js
+
 ```javascript
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
@@ -120,20 +131,23 @@ class App extends Component{
 reactDom.render(<App />, $('#app'));
 ```
 
-#### create /frontend/templates/frontend/index.html
+#### Create /frontend/templates/frontend/index.html
+
 ```html
 <div id='app'></div>
 {% load static %}
 <script src="{%static 'frontend/main.js'%}"></script>
 // link bootstrap jq css js files
 ```
-#### Create a View in `frontend/views.py` which renders the `index.html` template
+#### Create a View in `frontend/views.py`, which renders the `index.html` template
+
 ```python
 from django.shortcuts import render
 def index(request):
     return render(request, 'frontend/index.html')
 ```
 #### Create an URL pattern in `frontend/urls.py` to route the view. Make sure to add it to project URLconf.
+
 ```python
 from django.urls import path
 from . import views
@@ -142,7 +156,7 @@ urlpatterns = [
 ]
 ```
 
-#### Now running `npm run dev` creates/updates the `main.js` file in `frontend/static/frontend`
+#### Now, running `npm run dev` generates the `main.js` file in `frontend/static/frontend`.
 
 #### Create /frontend/src/components/layout/Header.js
 * Install an extension in VSCode.- `ES7 React`.
@@ -151,7 +165,8 @@ urlpatterns = [
 * Paste some `bootstrap navbar` in the `render` function
 * Change all classes into className.
 
-#### Import this Header component file into the `App.js`
+#### Import the Header component file in `App.js`
+
 ```javascript
 import Header from './layout/Header.js'
 // The `return` statement of `App` should contain `<Header />`
@@ -172,6 +187,7 @@ class App extends Component {
 * Write simple _class based components_ in Leads.js and Form.js. We'll change them later.
 
 #### Create a _functional component_ in Dashboard.js
+
 ```javascript
 import React, { Fragment } from 'react';
 import Form from './Form';
@@ -187,7 +203,8 @@ export default function Dashboard() {
 }
 ```
 
-#### Import this Dashboard component in App.js
+#### Import the Dashboard component in App.js
+
 ```javascript
 import React, { Fragment } from 'react';
 // the return should look like this
@@ -205,7 +222,8 @@ import React, { Fragment } from 'react';
 
 #### Create src/store.js.
 1. This exports a `createStore` object of `redux`,
-2. which takes in _rootReducer_, _initialState_ and _middlewares_ 
+2. which takes in _rootReducer_, _initialState_ and _middlewares_.
+
 ```javascript
 import { createStore, applyMiddleware } from 'redux';
 import { composeWithDevTools } from "redux-devtools-extension";
@@ -232,8 +250,9 @@ export default combineReducers({
 });
 ```
 
-#### Change the `app.js` file to include a `Provider` which takes in the `store` as a `prop`.
+#### Change the `app.js` file to include a `Provider`, which takes in the `store` as a `prop`.
 * This _provider_ comes from the `react-redux`.
+
 ```
 import { Provider } from "react-redux";
 import store from '../store';
@@ -256,6 +275,7 @@ export const GET_LEADS = "GET_LEADS";
 3. This function takes in the _state_ and an _action_.
 4. The _action type_ is evaluated.
 5. and it returns the _state_ and the _payload_.
+
 ```javascript
 import { GET_LEADS } from "../actions/types.js";
 const initialState = {
@@ -282,6 +302,7 @@ export default function(state = initialState, action) {
 1. This exports an _action method_ called `getLeads`,
 2. which _dispatches_ the method to the _leads reducer_.
 3. The dispatch takes in an _action type_ and a _payload_.
+
 ```javascript
 import axios from 'axios';
 import { GET_LEADS } from './types';
@@ -297,7 +318,8 @@ export const getLeads = () => dispatch => {
 	.catch(err => console.log(err));
 };
 ```
-#### components/leads/Leads.js
+
+#### src/components/leads/Leads.js
 * We add some `react-redux` stuff.
 * The plan is: As the _component is mounted_, the action method is called and the _state comes down from the reducer_ into the component as a prop.
 * To achieve this:
@@ -404,7 +426,7 @@ export const addLead = lead => dispatch => {
 };
 ```
 
-#### reducers/lead.js
+#### src/reducers/lead.js
 ```javascript
 case ADD_LEAD:
   return {
@@ -413,7 +435,7 @@ case ADD_LEAD:
   };
 ```
 
-#### components/leads/Form.js
+#### src/components/leads/Form.js
 ```javascript
 import { connect } from "react-redux";
 import PropTypes from 'prop-types';
