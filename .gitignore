@@ -1,4 +1,4 @@
-node_modules
+﻿node_modules
 
 ### Django ###
 *.log
@@ -133,4 +133,5 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+.vscode
 # End of https://www.gitignore.io/api/django
