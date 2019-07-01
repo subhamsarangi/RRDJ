@@ -1,25 +1,31 @@
 # RRDJ
 ## React Redux Django Lead Manager
-### create the environment
-```pipenv shell
+### Create an environment
+```
+pipenv shell
 pipenv django djangorestframework django-rest-knox
 ```
 
-## create django project[leadmanager] and app[leads].
-## create a model[Lead] with name, email, message, timestamp. migrate.
-### DRF provides us with many things like ModelSerializer. ModelViewSet, DefaultRouter
+### Create a Django project, `leadmanager` and an app, `leads`.
+* Make a model `Lead` with name, email, message, timestamp. migrate.
 
-//a ModelSerializer(with a meta class like ModelForm)
-# leads/serializers.py
+### Build a very basic API
+* [DRF]('https://www.django-rest-framework.org/') provides us with many things like `ModelSerializer`, `ModelViewSet`, `DefaultRouter`
+
+#### leads/serializers.py
+* A ModelSerializer(with a meta class like ModelForm)
+```python
 from rest_framework.serializers import ModelSerializer
 from .models import Lead
 class LeadSerializer(ModelSerializer):
     class Meta:
         model = Lead
         fields = '__all__'
+```
 
-//a ModelViewSet(queryset, permission_classes, serializer_class).
-# leads/api.py
+#### leads/api.py
+* A ModelViewSet(queryset, permission_classes, serializer_class).
+```python
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import AllowAny
 from .models import Lead
@@ -28,112 +34,173 @@ class LeadViewSet(ModelViewSet):
     queryset = Lead.objects.all()
     permission_classes = [AllowAny]
     serializer_class = LeadSerializer
+```
 
-
-//a router(router.register(path, viewset, app))
-# leads/urls.py
+#### leads/urls.py
+* A router(router.register(path, viewset, app))
+```python
 from rest_framework.routers import DefaultRouter
 from .api import LeadViewSet
 router = DefaultRouter()
 router.register('api/leads', LeadViewSet, 'leads')
+```
 
-//an urlpattern
-# leads/urls.py
+#### leads/urls.py
+* an urlpattern
+```python
 urlpatterns = router.urls
+```
 
-download postman app and check the API
+#### Download [POSTMAN]('https://www.getpostman.com/') app and check the API
+```
 POST http://localhost:8000/api/appname/ {JSON DATA}
 GET http://localhost:8000/api/appname
 GET http://localhost:8000/api/appname/2
 DELETE http://localhost:8000/api/appname/2/
+```
 
-create a new app add to the proj settings
-create the following
-newapp/src/component (for react redux components and stuff. index.js)
-newapp/static/newapp (compiled main.js)
-newapp/templates/newapp (indexhtml)
+### Configure React
+#### Create a new app, `frontend` add to the project settings file.
+#### Create the following directories and files.
+1. frontend/src/component (for our App.js,  index.js, components, reducers, actions, etc.)
+2. frontend/static/frontend(for the compiled main.js)
+3. frontend/templates/frontend(for index.html template)
 
-create a git repo. gitignore file. (use gitignore.io)
+#### Create a `git repository`, a `gitignore` file. (use gitignore.io)
 
-setup node and react and webpack
-download node
-npm init -y
-npm i -D webpack webpack-cli @babel/core babel-loader @babel/preset-env @babel/preset-react babel-plugin-transform-class-properties
-npm i react react-dom prop-types
-
-create .babelrc in root
+#### Setup node and react and webpack
+1. Download [NodeJS](https://nodejs.org/)
+2. `npm init -y`
+3. `npm i -D webpack webpack-cli @babel/core babel-loader @babel/preset-env @babel/preset-react babel-plugin-transform-class-properties`
+4. `npm i react react-dom prop-types`
+5. Create a `.babelrc` file  in root. Write the following in it,
+```
 {"presets":["babel/preset-env", "@babel/preset-react"],"plugins":["transform-class-properties"]}
+```
 
-create webpack.config.js in root
-module.exports = {module: {rules:[{test: /\.js$/, exclude: /node_modules/, use:{loader:"babel-loader"}}]}}
+6. Create a `webpack.config.js` file in the root. Write the following in it,
+```
+module.exports = {
+    module: {
+        rules:[{
+            test: /\.js$/, exclude: /node_modules/,
+            use:{loader:"babel-loader"}
+        }]
+    }
+}
+```
 
-in package.json make some scripts
-"script": {"dev":"webpack --mode development --watch ./projname/newapp/src/index.js --output ./projname/newapp/static/newapp/main.js", "build":"webpack --mode production ./projname/newapp/src/index.js --output ./projname/newapp/static/newapp/main.js"}
+#### In our `package.json`, write some scripts.
+```
+"script": {
+    "dev":"webpack --mode development --watch ./leadmanager/frontend/src/index.js --output ./leadmanager/frontend/static/frontend/main.js",
+    "build":"webpack --mode production ./leadmanager/frontend/src/index.js --output ./leadmanager/frontend/static/frontend/main.js"
+}
+```
 
 
-create /newapp/src/index.js
+#### create /frontend/src/index.js
+```
 import App from './components/App';
+```
 
-create /newapp/src/components/App.js
+#### create /frontend/src/components/App.js
+```
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-class App extends Component{render(){return <h1>Hey</h1>}}
+class App extends Component{
+  render(){
+    return <h1>Hey</h1>
+  }
+}
 reactDom.render(<App />, $('#app'));
+```
 
-create /newapp/templates/newapp/index.html
+#### create /frontend/templates/frontend/index.html
+```
 <div id='app'></div>
 {% load static %}
-<script src="{%static 'newapp/main.js'%}"></script>
-link bootstrap jq css js files
+<script src="{%static 'frontend/main.js'%}"></script>
+// link bootstrap jq css js files
+```
+#### Create a view in `frontend/views.py` which renders the `index.html` template
+```
+from django.shortcuts import render
+def index(request):
+    return render(request, 'frontend/index.html')
+```
+#### Create an url in `frontend/urls.py` to route the view. Make sure to add it to project URLconf
+```
+from django.urls import path
+from . import views
+urlpatterns = [
+    path('', views.index, name='index')
+]
+```
 
-create view in newapp which renders the index.html
-create url in newapp to route the view. make sure to add it to proj url
+#### Now running `npm run dev` creates/updates the `main.js` file in `frontend/static/frontend`
 
-npm run dev
-it creates/updates a main.js file in newapp/static/newapp
+#### Create /frontend/src/components/layout/Header.js
+* install an extension - `ES7 React` ...
+* Now it is possible to do `'rce'+Tab` which creates a _Class Based Component_.
+* `'rcf'+Tab` creates a _Functional Component_.
+* Paste some `bootstrap navbar` in the `render` function
+* Change all classes into className.
 
-create /newapp/src/components/layout/Header.js
-install an extension - ES7 React ...
-'rce'+Tab creates a snippet
-paste some bootstrap navbar in the return function
-change all classes into className.
-
-import this file into the App.js
+#### Import this Header component file into the `App.js`
+```
 import Header from './layout/Header.js'
-the return function of App should contain <Header />
-npm run dev again
+// The `return` statement of `App` should contain `<Header />`
+class App extends Component {
+    render() {
+        return (
+             <Header />
+        )
+    }
+}
+```
+* `npm run dev` again
 
-create /newapp/src/components/leads/Dashboard.js
-create /newapp/src/components/leads/Form.js
-create /newapp/src/components/leads/Leads.js
-add simple class based components in Leads and Form. We'll change later.
+#### Create these files in /frontend/src/components/leads/
+1. Dashboard.js
+2. Form.js
+3. Leads.js
+* Write simple _class based components_ in Leads.js and Form.js. We'll change them later.
 
-'rcf'+Tab creates a functional component in Dashboard
+#### Create a _functional component_ in Dashboard.js
+```
 import React, { Fragment } from 'react';
 import Form from './Form';
 import Leads from './Leads';
-put the following in return:
+export default function Dashboard() {
+    return (
+        <Fragment>
+            <h1>Dashboard</h1>
+            <Leads />
+            <Form />
+        </Fragment>
+    )
+}
+```
+
+#### Import this Dashboard component in App.js
+```
+import React, { Fragment } from 'react';
+// the return should look like this
 <Fragment>
- <Form />
- <Leads />
+   <Header />
+   <div className='container'>
+       <Dashboard />
+   </div>
 </Fragment>
+```
 
-import this Dashboard in App.js
-import Fragment in the App.js
-the return should look like this
-<Fragment>
- <Header />
- <div className='container'>
-  <Dashboard />
- </div>
-</Fragment>
+### Using [Redux]('https://redux.js.org/')
+#### Install Redux and friends
+`npm i redux react-redux redux-thunk redux-devtools-extension`
 
-
-
-install redux and friends
-npm i redux react-redux redux-thunk redux-devtools-extension
-
-create store.js in src. This exports a createStore object of redux, which takes in rootreducers, initial state and middlewarers
+#### Create a `store.js` in src. This exports a `createStore` object of `redux`, which takes in _rootReducer_, _initialState_ and _middlewares_ 
+```
 import { createStore, applyMiddleware } from 'redux';
 import { composeWithDevTools } from "redux-devtools-extension";
 import thunk from "redux-thunk";
@@ -146,27 +213,35 @@ const store = createStore(
     composeWithDevTools(applyMiddleware(...middleware))
 );
 export default store;
+```
 
-create dir reducers in src. create index.js inside. This exports a combineReducers object of redux, which takes in the reducers.
+#### Create a directory `reducers` in src. create `index.js` inside. This exports a `combineReducers` object of `redux`, which takes in the _reducers_.
+```
 import { combineReducers } from "redux";
 import leads from './leads'; //leads reducer
 export default combineReducers({
 	leads // leadReducer : leads
 });
+```
 
-change the app.js to include a Provider which takes in the store as a prop. This provider comes from react-redux.
+#### Change the `app.js` to include a `Provider` which takes in the `store` as a `prop`. This _provider_ comes from the `react-redux`.
+```
 import { Provider } from "react-redux";
 import store from '../store';
 <Provider store={store}>
    <Fragment>
    ...
 </Provider>
+```
 
-in src create actions. then create types.js. This exports a constant which holds a string.
+#### In the src create _actions_. Then create a `types.js`. This exports a constant which holds a string.
 // a place to hold all of our types.
+```
 export const GET_LEADS = "GET_LEADS";
+```
 
-in the reducers folder create leads.js. This is a reducer which is used to make the combined reducer and in turn creates the store. This function takes in the state and an action. the action type is evaluated and it returns the state and the payload
+#### In the reducers folder create `leads.js`. This is a reducer which is used to make the _combined reducer_ and in turn, creates the _store_. This function takes in the _state_ and an _action_. The _action type_ is evaluated and it returns the _state_ and the _payload_.
+```
 import { GET_LEADS } from "../actions/types.js";
 const initialState = {
     leads: []
@@ -182,10 +257,11 @@ export default function(state = initialState, action) {
             return state;
     }
 }
+```
+#### Install [Axios](https://github.com/axios/axios) to make HTTP requests. Use `npm install axios` to make the HTTP requests. We can also use fetchAPI or something else, too.
 
->>> npm install axios to make the http requests. we can also use fetchAPI or something else, too.
-
-In the actions folder create leads.js. This is where we make all the http requests. This exports an action method called getLeads, which dispatches the method to the leads reducer. The dispatch takes in an action type and a payload.
+#### In the `actions` folder create `leads.js`. This is where we make all the http requests. This exports an _action method_ called `getLeads`, which _dispatches_ the method to the _leads reducer_. The dispatch takes in an _action type_ and a _payload_.
+```
 import axios from 'axios';
 import { GET_LEADS } from './types';
 // GET LEADS
@@ -199,11 +275,17 @@ export const getLeads = () => dispatch => {
         })
 	.catch(err => console.log(err));
 };
-
-components/leads/Leads.js <we add some react-redux stuff.>
-When the component is mounted, the action method is called and the state comes down from the reducer into the component as a prop.
-To do this: 1> get the redux reducer state 2> map it to component props 3> add a PropType 4> wrap the component name by a 'connect' method of react-redux 5> pass the map & the getLeads method into this 'connect' 6> call the getLeads when the component mounts.
-
+```
+#### components/leads/Leads.js <we add some react-redux stuff.>
+* When the _component is mounted_, the action method is called and the _state comes down from the reducer_ into the component as a prop.
+* To do this:
+1. get the redux reducer state
+2. map it to component props
+3. add a PropType
+4. wrap the component name by a 'connect' method of react-redux
+5. pass the map & the getLeads method into this 'connect'
+6. call the getLeads when the component mounts.
+```
 import { connect } from "react-redux";
 import PropTypes from 'prop-types';
 import { getLeads } from '../../actions/leads';
@@ -254,10 +336,11 @@ render() {
             </Fragment>
         )
     }
+```
 
-
-// DELETING LEADS
-//actions/leads.js a new action that deletes a lead from the database and dispatches the id to the reducer
+### DELETING LEADS
+#### actions/leads.js a new action that deletes a lead from the database and dispatches the id to the reducer
+```
 export const deleteLead = (id) => dispatch => {
     axios
         .delete(`/api/leads/${id}/`)
@@ -269,16 +352,19 @@ export const deleteLead = (id) => dispatch => {
         })
         .catch(err => console.log(err));
 };
-
-//reducers/leads.js add a new case that removes the deleted lead from the UI
+```
+#### reducers/leads.js. add a new case that removes the deleted lead from the UI
+```
  	case DELETE_LEAD:
             return {
                 ...state,
                 leads: state.leads.filter(lead => lead.id !== action.payload)
             };
+```
 
-//CREATING LEADS
-actions/leads.js
+### CREATING LEADS
+#### actions/leads.js
+```
 export const addLead = lead => dispatch => {
     axios
         .post('/api/leads/', lead)
@@ -290,15 +376,19 @@ export const addLead = lead => dispatch => {
         })
         .catch(err => console.log(err));
 };
+```
 
-reducers/lead.js
+#### reducers/lead.js
+```
         case ADD_LEAD:
             return {
                 ...state,
                 leads:[...state.leads, action.payload]
             };
+```
 
-components/leads/Form.js
+#### components/leads/Form.js
+```
 import { connect } from "react-redux";
 import PropTypes from 'prop-types';
 import { addLead } from '../../actions/leads';
@@ -315,3 +405,4 @@ static propTypes = {
 const { name, email, message } = this.state;
 const lead = { name, email, message };
 this.props.addLead(lead);
+```
