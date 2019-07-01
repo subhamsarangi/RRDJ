@@ -3,18 +3,11 @@ import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '%mqfflmgh2mkzzfyutn(*3^m95mw(y-(+i%@86huk&#uz^@lv9'
 
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -23,7 +16,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
     'rest_framework',
+    
     'leads',
     'frontend',
 ]
@@ -58,10 +53,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'leadmanager.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/2.2/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -86,9 +77,9 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'en-gb'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
 
 USE_I18N = True
 
