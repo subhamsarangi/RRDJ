@@ -59,10 +59,10 @@ urlpatterns = router.urls
 
 #### Download [POSTMAN](https://www.getpostman.com/) and check the API.
 ```
-POST http://localhost:8000/api/appname/ {JSON DATA}
-GET http://localhost:8000/api/appname
-GET http://localhost:8000/api/appname/2
-DELETE http://localhost:8000/api/appname/2/
+POST http://localhost:8000/api/leads/ {JSON DATA}
+GET http://localhost:8000/api/leads
+GET http://localhost:8000/api/leads/2
+DELETE http://localhost:8000/api/leads/2/
 ```
 
 ### Configure [React](https://reactjs.org/)
@@ -128,7 +128,7 @@ class App extends Component{
     return <h1>Hey</h1>
   }
 }
-reactDom.render(<App />, $('#app'));
+reactDom.render(<App />, document.getElementById('app'));
 ```
 
 #### Create /frontend/templates/frontend/index.html
@@ -216,7 +216,7 @@ import React, { Fragment } from 'react';
 </Fragment>
 ```
 
-#### Using [Redux](https://redux.js.org/)
+### Using [Redux](https://redux.js.org/)
 * Install Redux and friends
 `npm i redux react-redux redux-thunk redux-devtools-extension`
 
@@ -250,7 +250,7 @@ export default combineReducers({
 });
 ```
 
-#### Change the `app.js` file to include a `Provider`, which takes in the `store` as a `prop`.
+#### Change the `App.js` file to include a `Provider`, which takes in the `store` as a `prop`.
 * This _provider_ comes from the `react-redux`.
 
 ```
@@ -297,6 +297,7 @@ export default function(state = initialState, action) {
 #### Install [Axios](https://github.com/axios/axios) to make HTTP requests.
 * Use `npm install axios` to make the HTTP requests. We can also use fetchAPI or something else, too.
 
+### GETTING THE LEADS
 #### Create src/actions/leads.js.
 * This is where we make all the http requests.
 1. This exports an _action method_ called `getLeads`,
@@ -343,47 +344,46 @@ static PropTypes = {
 componentDidMount() {
     this.props.getLeads();
 }
+// {this.props.leads.map(lead => (<tr key={lead.id}><td>{lead.name}</td></tr>))}
+// change the render function
+render() {
+    return (
+        <Fragment>
+            <h2>Leads</h2>
+            <table className="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Message</th>
+                        <th />
+                    </tr>
+                </thead>
+                <tbody>
+                    {this.props.leads.map(lead => (
+                        <tr key={lead.id}>
+                            <td>{lead.id}</td>
+                            <td>{lead.name}</td>
+                            <td>{lead.email}</td>
+                            <td>{lead.message}</td>
+                            <td><button className="btn btn-danger btn-sm">Delete</button></td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </Fragment>
+    )
+}
 //map the reducer state to component prop (before the last line)
 const mapStateToProps = state => ({
     leads: state.leads.leads // state.leadReducer.leads
 });
 // change the last line
 export default connect(mapStateToProps, { getLeads })(Leads);
-
-// {this.props.leads.map(lead => (<tr key={lead.id}><td>{lead.name}</td></tr>))}
-// change the render function
-render() {
-        return (
-            <Fragment>
-                <h2>Leads</h2>
-                <table className="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Message</th>
-                            <th />
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {this.props.leads.map(lead => (
-                            <tr key={lead.id}>
-                                <td>{lead.id}</td>
-                                <td>{lead.name}</td>
-                                <td>{lead.email}</td>
-                                <td>{lead.message}</td>
-                                <td><button className="btn btn-danger btn-sm">Delete</button></td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </Fragment>
-        )
-    }
 ```
 
-### DELETING LEADS
+### DELETING A LEAD
 #### src/actions/leads.js
 * Create a new action that deletes a lead from the database and dispatches the id to the reducer
 ```javascript
@@ -410,7 +410,7 @@ export const deleteLead = (id) => dispatch => {
             };
 ```
 
-### CREATING LEADS
+### CREATING A LEAD
 #### src/actions/leads.js
 ```javascript
 export const addLead = lead => dispatch => {
