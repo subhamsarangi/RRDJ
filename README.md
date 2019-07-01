@@ -6,13 +6,13 @@ pipenv shell
 pipenv django djangorestframework django-rest-knox
 ```
 
-## Create a Django project, `leadmanager`, an app, `leads`, and a model, 'Lead'.
+## Create a Django project (`leadmanager`), an app (`leads`), and a model (`Lead`).
 ```
 django-admin startproject leadmanager
 cd leadmanager
 python manage.py startapp leads
 ```
-* Create the model with name, email, message, timestamp. Migrate.
+* Create the model with name, email, message, timestamp fields. Migrate.
 
 ```python
 from django.db import models
